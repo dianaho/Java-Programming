@@ -1,0 +1,328 @@
+// Keep these two lines.  They are what tell Java to include the
+// classes you need for working with files.
+// You might get warnings about them at first.  That's OK, just
+// ignore the warnings.  They should go away as you complete your code.
+import java.io.*;
+import java.util.*;
+
+/** Your header comment goes here.
+  * Be sure to include your name (both of you if you worked with a partner)
+  * and the date */
+
+/**
+ * Author: Diana Ho 
+ * PID: A10573610
+ * Login: cs8sbbg
+ * PSA: 2
+ * Date: April 13, 2014
+ */
+
+public class WordFun
+{
+  // Complete the methods below.  Be sure to add header (javadoc style)
+  // comments for each. You may (and should) also write additional
+  // helper methods.  Be sure to make the helper methods private and include
+  // header comments for each.
+  
+  // Although you will not be graded on style this week, you should follow
+  // these basic style guidelines nonetheless.   You will be graded on this
+  // in weeks to come, so start to practice now.
+  
+  // Use proper indenting: Indent each block of code (e.g., method body,
+  //   loop body.  Line up the lines in the block so that they are all
+  //   indented to the same degree.  See examples of this in the book
+  //   and in the code below.
+  // Use descriptive variable names: The names of your variables should
+  //   describe the data they hold.  Almost always, your variable names
+  //   should be words (or abbreviations), not single letters.
+  // Write short methods: Break your methods up into submethods if they
+  //   are getting too complicated or long.  Generally your methods
+  //   shouldn't get too much longer than about 20 lines of code (give or take)
+  // Write short lines: Each line of code should be no longer than 80
+  //   characters, so it can fit in a reasonable size window.  There's a
+  //   column number in the lower-right corner of Dr Java (row:col).
+  //
+  // We'll start with these, as these are the most important.  We may add
+  // to this list later in the term, but if you do all of the above you're
+  // in good shape.
+  
+  /** Return the score of the letter in scrabble.
+    * @param ch The letter in question
+    * @return The scrabble value of the letter
+    * */
+  private int letterScore( char ch )
+  {
+    char lowerCase = Character.toLowerCase( ch );
+    switch (lowerCase) {
+      case 'a': return 1;
+      case 'b': return 3;
+      case 'c': return 3;
+      case 'd': return 2;
+      case 'e': return 1;
+      case 'f': return 4;
+      case 'g': return 2;
+      case 'h': return 4;
+      case 'i': return 1;
+      case 'j': return 8;
+      case 'k': return 5;
+      case 'l': return 1;
+      case 'm': return 3;
+      case 'n': return 1;
+      case 'o': return 1;
+      case 'p': return 3;
+      case 'q': return 10;
+      case 'r': return 1;
+      case 's': return 1;
+      case 't': return 1;
+      case 'u': return 1;
+      case 'v': return 4;
+      case 'w': return 4;
+      case 'x': return 8;
+      case 'y': return 4;
+      case 'z': return 10;
+      default: return 0;
+    }
+  }
+  
+  /** Returns the probability of each letter, in English
+    * @param ch The character in question
+    * @return The probability of that letter occurring in the English language
+    * */
+  private double letterProb( char ch )
+  {
+    char lowerCase = Character.toLowerCase( ch );
+    switch (lowerCase) {
+      case ' ': return 0.1904;
+      case 'e': return 0.1017;
+      case 't': return 0.0737;
+      case 'a': return 0.0661;
+      case 'o': return 0.0610;
+      case 'i': return 0.0562;
+      case 'n': return 0.0557;
+      case 'h': return 0.0542;
+      case 's': return 0.0508;
+      case 'r': return 0.0458;
+      case 'd': return 0.0369;
+      case 'l': return 0.0325;
+      case 'u': return 0.0228;
+      case 'm': return 0.0205;
+      case 'c': return 0.0192;
+      case 'w': return 0.0190;
+      case 'f': return 0.0175;
+      case 'y': return 0.0165;
+      case 'g': return 0.0161;
+      case 'p': return 0.0131;
+      case 'b': return 0.0115;
+      case 'v': return 0.0088;
+      case 'k': return 0.0066;
+      case 'x': return 0.0014;
+      case 'j': return 0.0008;
+      case 'q': return 0.0008;
+      case 'z': return 0.0005;
+      default: return 0.0;
+    }
+  }
+  
+  /** Takes a string as input and return the string's score as if it were a word
+    * played in the game Scrabble
+    * @param word The string in question
+    * @return The Scrabble score of the word
+    */
+  public int scrabbleScore( String word )
+  {
+    int totalScore = 0;
+    
+    for ( int i = 0; i < word.length(); i++ )
+    {
+      char c = word.charAt( i );
+      int individualScore = letterScore( c );  // Finding the score at letter c
+      totalScore = individualScore + totalScore;  // Totaling up individual letter scores
+    }
+    return totalScore;
+  }
+  /** Takes a string & int and encrypts the string by rotating each character by
+    * the amount rotation declared by int
+    * @param s The string to encrypt
+    * @param rotation The amount to rotate the letter of the string by
+    * @return The resulting string
+    */
+  public String encrypt(String s, int rotation)
+  {
+    // Converts negative rotations to the equivalent positive shift under 26
+    if (rotation < 0)
+      rotation = 26 - (-rotation % 26);
+    
+    // Converts positive rotations over 25 to the equivalent shift under 26
+    else if (rotation > 25)
+      rotation = (rotation % 26);
+    
+    String result = "";
+    
+    for (int i = 0; i < s.length(); i++)  // Encryption loop
+    {
+      char ch = rotate( s.charAt(i), rotation );  // Individual character rotation
+      result += ch;  // Adding encrypted letter to resulting string
+    }
+    
+//    System.out.println(result);
+    return result;
+  }
+  
+  /** Encrypts a single character using the int given
+    * Non-alphabetic characters remain unchanged
+    */
+  private char rotate(char character, int number)
+  {
+    if (Character.isLetter(character))  // Check for characters only
+    {
+      if (Character.isUpperCase(character))  // Check for upper case characters
+      {
+        character = (char) ('A' + (Character.toUpperCase(character)
+                                     - 'A' + number) % 26);  // Implement rotation
+      }
+      
+      else
+      {
+        character = (char) ('a' + ((character)
+                                     - 'a' + number) % 26); // Implement rotation
+      }
+    }
+    return character;
+  }
+  
+  /** Decrypts a string by applying the rotation in the opposite direction
+    * @param s The string to decrypt
+    * @param rotation The amount to rotate the letter of the string by
+    * @return The resulting decrypted string
+    */
+  public String decrypt(String s, int rotation)
+  {
+    // Implement encrypt method to reverse the rotation of the string
+    String result = encrypt( s, -rotation );
+//    System.out.println(result);
+    return result;
+  }
+  
+  /** Read from file named by first argument a line at a time, encrypting it and
+    * writing the result to the file named by the second argument
+    * @param infile File to be read from
+    * @param outfile File where the result will be written to
+    * @param rotation The amount to rotate the letter of the string by
+    */
+  public void encryptFile(String infile, String outfile, int rotation) throws IOException
+  {
+    // Create a Scanner for input
+    File sourceFile = new File( infile );
+    Scanner input = new Scanner( sourceFile );
+    
+//    // Check if target file exists
+    File targetFile = new File( outfile );
+//    if ( targetFile.exists())
+//    {
+//      System.out.println( "Target file " + outfile + " already exists" );
+//    }
+//    
+    // Create a PrintWriter for output
+    PrintWriter output = new PrintWriter( targetFile );
+    
+    // Reads a line from the source file, encrypts the text, and write the new
+    // encrypted line to the target file
+    while ( input.hasNext())
+    {
+      String s1 = input.nextLine();
+      String s2 = encrypt( s1, rotation );
+      System.out.println( s2 );
+      output.println( s2 );
+    }
+    
+    // Close output file to ensure that data are saved to file properly
+    input.close();
+    output.close();
+  }
+  
+  /** Read from file named by first argument a line at a time, decrypting it and
+    * writing the result to the file named by the second argument
+    * @param infile File to be read from
+    * @param outfile File where the result will be written to
+    * @param rotation The amount to rotate the letter of the string by
+    */
+  public void decryptFile(String infile, String outfile, int rotation) throws IOException
+  {
+    // Create a Scanner for input
+    File sourceFile = new File( infile );
+    Scanner input = new Scanner( sourceFile );
+    
+    // Check if target file exists
+    File targetFile = new File( outfile );
+//    if ( targetFile.exists())
+//    {
+//      System.out.println( "Target file " + outfile + " already exists" );
+//    }
+    
+    // Create a PrintWriter for output
+    PrintWriter output = new PrintWriter( targetFile );
+    
+    // Reads a line from the source file, encrypts the text, and write the new
+    // encrypted line to the target file
+    while ( input.hasNext())
+    {
+      String s1 = input.nextLine();
+      String s2 = decrypt( s1, rotation );
+      System.out.println( s2 );
+      output.println( s2 );
+    }
+    
+    // Close output file to ensure that data are saved to file properly
+    input.close();
+    output.close();
+  }
+  
+  public String decryptSolve(String s)
+  {
+    // Complete this method for extra credit
+    return "";
+  }
+  
+  public void decryptFileSolve(String infile, String outfile) throws IOException
+  {
+    // Complete this method for extra credit
+  }
+  
+  public String pigLatinWord( String word )
+  {
+    // Complete this method for extra credit
+    return "";
+  }
+  
+  public String pigLatin( String text )
+  {
+    // Complete this method for extra credit
+    return "";
+  }
+  
+  /** The main method. THIS IS WHERE YOU SHOULD ADD MORE TESTS
+    * FOR scrabbleScore, encrypt and decrypt methods AND ANY OTHER
+    * METHOD THAT YOU CREATE. BE SURE TO TEST YOUR CODE THOROUGHLY
+    * */
+  public static void main( String[] args ) throws IOException
+  {
+    //Part 1. Scrabble Scoring Tests
+    WordFun f = new WordFun();
+    System.out.println("Score for 'Student' = "+f.scrabbleScore("Student") + " ...(should be 8)");
+    System.out.println("Score for 'programming' = "+f.scrabbleScore("programming") + " ...(should be 19)");
+    System.out.println("Score for 'abel' = "+f.scrabbleScore("abel") + " ...(should be 6)");
+    
+    //Part 2. The Caesar Cipher Tests
+    System.out.println("Encrypting Text: Cse8b: Programming in Java, Part 2");
+    System.out.println(f.encrypt("Cse8b: Programming in Java, Part 2",17));
+    System.out.println("Tjv8s: Gifxirddzex ze Armr, Grik 2");
+    System.out.println("Decrypting Text: Byffi yhwlsjncih qilfx");
+    System.out.println(f.decrypt("Byffi yhwlsjncih qilfx",-58));
+    System.out.println("Hello encryption world");
+    
+    //Testing encryptFile & decryptFile methods
+    f.encryptFile( "testEncrypt.txt", "blank.txt", 42 );
+    System.out.println("\n \n \n");
+    f.decryptFile( "testEncryptAnswer42.txt", "blank.txt", 42 );
+  }
+}

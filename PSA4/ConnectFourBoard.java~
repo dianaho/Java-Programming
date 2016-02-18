@@ -1,0 +1,88 @@
+/**
+ * Author: Diana Ho
+ * PID: A10573610
+ * Login: cs8sbbg
+ * PSA: 4
+ * Date: April 28, 2014
+ */
+
+import java.util.*;
+
+public class ConnectFourBoard
+{
+  ///////////////FIELDS///////////////
+  
+  private char[][] board;  //A two-dimensional list of characters
+  private int numRows;  //An integer storing the number of rows on the game board
+  private int numColumns; //An integer storing the number of columns
+  
+  /** Constructor for the ConnectFourBoard
+    * @param rows The number of rows to set
+    * @param columns The number of rows to set
+    */
+  public ConnectFourBoard( int rows, int columns )
+  {
+    this.numRows = rows;
+    this.numColumns = columns;
+    this.board = new char[numRows][numColumns];
+    
+    //Setting each position in array to ' '
+    for( int i = 0; i < this.numRows; i++ )
+    {
+      for( int j = 0; j < this.numColumns; j++ )
+        board[i][j] = ' ';
+    }
+  }
+  
+  /** Default constructor which initializes numRows to 6, numColumns to 7,
+    * and initialize the board as a 6-rows by 7-columns  array of spaces
+    */
+  public ConnectFourBoard()
+  {
+    this( 6, 7 );
+  }
+  
+  /** Returns a string representing the ConnectFourBoard object that calls it.
+    * Each "checker" takes up one space
+    */
+  public String toString()
+  {
+    String toReturn = new String();
+    
+    // Nested loop to create the vertical columns here
+    for ( int row = 0; row < this.numRows; row++ )
+    {
+      for ( int col = 0; col < this.numColumns; col++ )
+      {        
+        toReturn += "|" + this.board[row][col];
+      }
+      toReturn += "|\n";
+    }
+    
+    // Create the line at the bottom of the board
+    for ( int rnum = 0; rnum < this.numColumns; rnum++ )
+    {
+      toReturn += "--"; 
+    }
+    toReturn += "-\n";
+    
+    // Create the column numbers   
+    for ( int rnum = 0; rnum < this.numColumns; rnum++ )
+    {
+      toReturn += " " + rnum % 10; 
+    }
+    toReturn += "\n";
+    
+    return toReturn;
+  }
+  
+  public void addMove(int columns, char checker)
+  {
+  }
+  
+  public static void main( String[] args )
+  {
+    ConnectFourBoard game1 = new ConnectFourBoard(5,15);
+    System.out.print( game1 );
+  }
+}

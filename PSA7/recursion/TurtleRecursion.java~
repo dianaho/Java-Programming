@@ -1,0 +1,23 @@
+/** A class that will use recursion to solve problems.
+  * Author: Diana Ho
+  * PID: A10573610
+  * Login: cs8sbbg
+  * PSA: 7
+  * Date: May 19, 2014
+  */
+
+public class TurtleRecursion
+{
+  /** This method will create a spiral using recursion
+    * @param turtle A drawing turtle to create lines
+    * @param initialLength The initial length of the spiral's first line segment
+    * @param angle An angle specifying the degree of the angle formed by 
+    * neighboring segments
+    * @param multiplier Indicates how much each segment changes in size from the
+    * previous one
+    */
+  public void spiral(Turtle turtle, double initialLength, int angle,
+                     double multiplier)
+  {
+  }
+}

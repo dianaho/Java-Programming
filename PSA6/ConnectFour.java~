@@ -1,0 +1,173 @@
+/**
+ *
+ * You should answer these questions BEFORE you start coding:
+ * 
+ *   1. To what type of object will you add an instance of a PlayListener object (as a MouseListener)?
+ *   2. If your board has row r and column c , how many BoardCell objects do you need to create? 
+ *      To which component will you add these BoardCell objects?
+ *   3. Why is the JLabel status an instance variable (as opposed to just a local variable 
+ *      in the constructor)?
+ *   4. Where is the information about what contents are stored in each cell located?  
+ *      What method must the BoardCell call in its paintComponent method to determine what 
+ *      color to paint the "checker"?
+ *   5. Which method will determine when the game is over (by calling methods on the 
+ *      ConnectFourBoard object theBoard)?  Which method will detect illegal moves 
+ *      (again by calling methods on the ConnectFourBoard object theBoard)?
+ *   6. Will you need to create a separate listener to handle clicks on the New Game button, 
+ *      or will you use another instance of the PlayListener class?
+ *   7. How do you run the game?
+ *
+ **/
+
+
+// import all the necessary built-in java stuff
+import javax.swing.*;  // For swing classes (the "J" classes)
+import java.awt.*;     // For awt classes (e.g., Dimension)
+import java.awt.event.*; // For events (which you will implement)
+
+/**
+ * A class that implements a graphical version of connect 4.  Don't forget to 
+ * complete your header comment with your name and the date and the PSA.
+ */
+public class ConnectFour extends JFrame {
+  
+  /** The underlying board that will hold the state of the game */
+  private ConnectFourBoard theBoard;
+
+  /** Whose turn it is.  We use 'X' and 'O', but we will translate 'X's and 
+    * 'O's into colors to display them (I use blue and red in my example,
+    * but you can use any two colors you like).  */
+  private char turn;
+  
+  /** The status message at the top of the window */
+  private JLabel status;
+  
+  /** Create a new Connect 4 game that is 7x6.  */
+  public ConnectFour()
+  {
+    this( 6, 7 );
+  }
+
+  /** Create a new ConnectFour game with the specified row and column */
+  public ConnectFour( int row, int column )
+  {
+    // X starts
+    this.turn = 'X';
+    
+    // Make a new underlying board.
+    this.theBoard = new ConnectFourBoard(row, column);
+    
+    // The reset button.  It doesn't do anything YET.
+    // You'll need to define and add the appropriate listener to it.
+    JButton jbtReset = new JButton( "New Game" );
+    
+    // This message will always display the current status
+    // of the game (e.g., whose turn it is, whether the game is 
+    // over, who won, etc).  Feel free to change the initial message.
+    this.status = new JLabel( "Welcome to Connect 4!" );
+    
+    // This is the panel that will hold the BoardCells. 
+    // You will need to populate it.  I suggest writing a helper
+    // method to create the BoardCell objects and add them to
+    // the JPanel.  You will want to use a GridLayout on the displayBoard
+    // to lay out the BoardCell objects.
+    JPanel displayBoard = new JPanel();
+
+    // Use a BorderLayout to lay out the game board
+    setLayout( new BorderLayout() );
+    add( status, BorderLayout.NORTH );
+    add( displayBoard, BorderLayout.CENTER );
+    add( jbtReset, BorderLayout.SOUTH );
+    
+    // Size and show the board
+    pack();
+    setVisible( true );
+    
+  }
+      
+
+  // This is the method that is called when a BoardCell is clicked on.
+  // Refer to the PSA instructions for more details.
+  private void makeMove( int col )
+  {
+    repaint();
+  }
+  
+
+  /** An inner class that represents one graphical cell in the connect 4 board.
+    * Each cell keeps track of what row and column it is in.
+    * These are the objects that will listen for mouse clicks.
+    * Because they are an inner class, they have access to all of
+    * the methods in the ConnectFour outer class.  
+    * 
+    * Notice that a BoardCell object IS A JPanel, so it can be added directly
+    * to a ConnectFour object (which IS A JFrame).  You can also add listeners
+    * to JPanels (and BoardCells, since they are JPanels), which will be useful
+    * to detect where the user wants to play.  */
+  class BoardCell extends JPanel
+  {
+    /** The row in which this BoardCell appears in the board. *
+      * */
+    private int row;
+    
+    /** The column in which this BoardCell appears in the board. 
+      * */
+    private int column;
+    
+    /** Create a new BoardCell object at row r and column c. 
+      * The constructor is the right place to add the PlayListener too. */
+    BoardCell( int r, int c )
+    {
+      // You will implement this method.
+    }
+  
+    /** Return the preferred size for this BoardCell */
+    public Dimension getPreferredSize()
+    {
+      // Just a suggestion. Feel free to change it if you want.  
+      return new Dimension( 50, 50 );
+    }
+  
+    // Paint the BoardCell.  Note that this method should paint empty cells 
+    // in one color, cells filled with and 'X' with another color, and cells 
+    // filled with an 'O' in a third color.  
+    //
+    // IMPORTANT: You will need to refer to the 
+    // theBoard object in the ConnectFour class to get the contents of the 
+    // underlying cell that this visual cell represents.  If this does not make
+    // sense to you, seek help now.
+    //
+    // My suggestion here is to paint the whole background of the cell with a 
+    // solid rectangle, and then paint a circle (oval) on top to represent the space
+    // or the checker.  You'll want to make your circle slightly smaller than
+    // your rectangle.  Of course, feel free to get creative, add shadow, etc.
+    protected void paintComponent( Graphics g )
+    { 
+      super.paintComponent( g );
+      // Your code will go here.
+    }
+    
+    /** This is the listener that will handle clicks on the board cell.
+      * You will not need to change this code at all, but you should understand 
+      * what is going on.
+      * */
+    class PlayListener implements MouseListener
+    {
+      /** Inform the ConnectFour object that the corresponding column has been
+        * clicked */
+      public void mouseClicked( MouseEvent e ) 
+      {
+        // We just need to tell the board to play a checker in the appropriate
+        // column.  column refers to the instance variable in the BoardCell
+        // object.  This method calls the makeMove method in the ConnectFour class. 
+        makeMove( column );
+      }
+      
+      public void mousePressed( MouseEvent e ) {}
+      public void mouseReleased( MouseEvent e ) {}
+      public void mouseEntered( MouseEvent e ) {}
+      public void mouseExited( MouseEvent e ) {}
+    }
+}
+
+}

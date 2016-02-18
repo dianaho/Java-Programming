@@ -1,0 +1,18 @@
+import java.util.*;
+import java.awt.*;
+
+/** Don't forget your header comment. */
+public class Interactor
+{
+  /** This method takes a Critter and a list of Critters.  It finds the 
+    * Critter from the list of Critters that c will interact with.  Usually
+    * this is the closest Critter in the list, but you might vary this slightly
+    * (See the PSA instructions).  Then it asks the Critter c to reactTo
+    * that Critter.  The Rectangle r is the bounds in which 
+    * the Critters must stay, and should be passed to the reactTo method.
+    */
+  public void interact(Critter c, ArrayList<Critter> cList, Rectangle r)
+  {
+    // You will implement this.
+  }
+}

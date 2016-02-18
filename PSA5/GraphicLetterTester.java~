@@ -1,0 +1,12 @@
+import javax.swing.*;
+import java.awt.*;
+
+// Don't forget your comments.
+public class GraphicLetterTester
+{
+  public static void main( String[] args )
+  {
+    JFrame myFrame = new JFrame();
+    // Continue implementing main here.  Note that main is required.
+  }
+}

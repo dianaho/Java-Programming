@@ -1,0 +1,27 @@
+/**
+ * Author: Diana Ho
+ * PID: A10573610
+ * Login: cs8sbbg
+ * PSA: 8
+ * Date: June 4, 2014
+ */
+
+/** Class that creates the Chaser critter */
+public class Chaser extends Critter
+{
+  public Chaser ( int xInit, int yInit )
+  {
+    super ( xInit, yInit );
+  }
+  
+  /** Paint the Critter appropriately using the graphic object g */
+  public void paint( Graphics g )
+  {
+  }
+  
+  /** React appropriately to the Critter c, staying within the bounds
+    * of the Rectangle r */
+  public void reactTo( Critter c, Rectangle r )
+  {
+  }
+}

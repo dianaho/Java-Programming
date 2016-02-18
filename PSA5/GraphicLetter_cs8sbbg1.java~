@@ -1,0 +1,33 @@
+/**
+ * A class that represents the initials of my name
+ * Author: Diana Ho
+ * PID: A10573610
+ * Login: cs8sbbg
+ * PSA: 5
+ * Date: May 5, 2014
+ */
+
+public class GraphicLetter_cs8sbbg1 extends GraphicLetter
+{
+    public char whichChar()
+  {
+    return ' ';
+  }
+  
+  public GraphicLetter makeCopy()
+  {
+    return null;
+  }
+  
+  public Dimension getPreferredSize()
+  {
+    return null;
+  }
+  
+  protected void paintComponent( Graphics g )
+  {
+    // Call the paintComponent of the JPanel.  
+    // Leave this line in when you add to this method.
+    super.paintComponent(g); 
+  }
+}

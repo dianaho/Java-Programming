@@ -1,0 +1,338 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+
+/**
+ * Author: Diana Ho
+ * PID: A10573610
+ * Login: cs8sbbg
+ * PSA: 8
+ * Date: June 4, 2014
+ */
+
+/** Class that creates the critter applet and either starts or stops the
+  * simulation, along with creating all the buttons
+  */
+public class CritterController extends JApplet implements Runnable
+{
+  
+  /** Some constants that can be used throughout the class */
+  private static final int RUNNER = 0;
+  private static final int CHASER = 1;
+  private static final int RANDOM = 2;
+  private static final int CUSTOM = 3;
+  private int number = -1;
+  
+  /** How quickly the simulation runs.  The longer the delay, 
+    * the slower the simulation */
+  private static final int DELAY = 50;
+  
+  // Instance varaibles that maintain various parts of the simulation 
+  // YOU CAN (AND PROBABLY WILL NEED TO) ADD MORE INSTANCE VARIABLES HERE
+  private ArrayList<Critter> critterList;  /** The Critters in the world */
+  private Interactor actor; /** The Interactor object that controls which Critters interact */
+  private boolean running;  /** Whether or not the simulation is running */
+  private CritterPanel world; /** The custom JPanel that displays the Critters */
+  private JLabel stateLabel;  /** The label at the top of the panel */
+  private JLabel critLabel; /** The label next to the Critter buttons */
+  
+  public void init()
+  {
+    // Initialize the instance variables
+    critterList = new ArrayList<Critter>();
+    actor = new Interactor();
+    running = false;
+    
+    // The overall layout is a BorderLayout
+    setLayout( new BorderLayout() );
+    
+    // Add the CritterPanel in the middle
+    // You will need to add a MouseListener to this panel.
+    world = new CritterPanel();
+    add(world, BorderLayout.CENTER);
+    world.addMouseListener( new ClickListener() );
+    
+    // Call a helper method which adds the buttons and label at the top.
+    // YOU WILL LIKELY NEED TO ADD TO THE HELPER METHOD, so be sure to check it out.
+    JPanel topPanel = makeTopPanel();
+    add( topPanel, BorderLayout.NORTH );
+    
+    // Call a helper method which adds the buttons and label at the bottom.
+    // YOU WILL LIKELY NEED TO ADD TO THE HELPER METHOD, so be sure to check it out.
+    JPanel botPanel = makeBottomPanel();
+    add( botPanel, BorderLayout.SOUTH );
+    
+    // Start the simulation
+    new Thread( this ).start();
+  }
+  
+  // A helper method to arrange the buttons and label at the top 
+  // (i.e., the ones that control the simulation).  You will probably
+  // need to add to this method, e.g. to add listeners on the buttons.
+  private JPanel makeTopPanel()
+  {
+    JPanel topPanel = new JPanel();
+    topPanel.setLayout( new GridLayout( 1, 2 ) );
+    JPanel topButPanel = new JPanel();
+    JButton start = new JButton( "Start" );
+    JButton stop = new JButton( "Stop" );
+    JButton clear = new JButton( "Clear" );
+    
+    // Adding listeners for the Start, Stop, and Clear buttons
+    start.addActionListener( new StartListener() );
+    stop.addActionListener( new StopListener() );
+    clear.addActionListener( new ClearListener() );
+    
+    stateLabel = new JLabel( "Please add two or more Critters" );
+    topPanel.add( stateLabel );
+    topButPanel.add( start );
+    topButPanel.add( stop );
+    topButPanel.add( clear );
+    topPanel.add( topButPanel );
+    
+    return topPanel;
+  }
+  
+  // A helper method to arrange the buttons and label at the bottom 
+  // (i.e., the ones that control adding critters).  You will probably
+  // need to add to this method, e.g. to add listeners on the buttons.
+  private JPanel makeBottomPanel()
+  {
+    JPanel botPanel = new JPanel();
+    JPanel botButPanel = new JPanel();
+    botButPanel.setLayout( new GridLayout( 1, 4 ) );
+    botPanel.setLayout( new GridLayout( 2, 1 ) );
+    
+    // You will need to create and add action listeners to these buttons
+    JButton chase = new JButton( "Chaser" );
+    JButton runner = new JButton( "Runner" );
+    JButton rand = new JButton( "Random" );
+    JButton custom = new JButton( "Custom" );
+    
+    // Adding ActionListeners for Critter buttons
+    chase.addActionListener( new ChaseListener() );
+    runner.addActionListener( new RunnerListener() );
+    rand.addActionListener( new RandListener() );
+    custom.addActionListener( new CustomListener() );
+    
+    botButPanel.add( chase );
+    botButPanel.add( runner );
+    botButPanel.add( rand );
+    botButPanel.add( custom );
+    
+    critLabel = new JLabel( "Select which Critter to place" );
+    botPanel.add( critLabel );
+    botPanel.add( botButPanel );
+    
+    return botPanel;
+  }
+  
+  /** Private helper method to change the status at the top of the window
+    * when buttons are clicked
+    */
+  private void changeStatus( boolean running )
+  {
+    if( running ==  false && critterList.size() >=2 )
+      stateLabel.setText( "Simulation is stopped." );
+    else if( running == false && critterList.size() < 2 )
+      stateLabel.setText( "Please add two or more critters." );
+    else if( running == true && critterList.size() >= 2 )
+      stateLabel.setText( "Simulation is running." );
+  }
+  
+  /** A StartListener class for the Start button */
+  class StartListener implements ActionListener
+  {
+    /** Method to start the simulation
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      if( critterList.size() >= 2 )
+        running = true;
+      changeStatus( running );
+      repaint();
+    }
+  }
+  
+  /** A StopListener class for the Stop button */
+  class StopListener implements ActionListener
+  {
+    /** Method to stop the simulation
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      running = false;
+      changeStatus( running );
+    }
+  }
+  
+  /** A ClearListener for the Clear button */
+  class ClearListener implements ActionListener
+  {
+    /** Method to clear the simulation
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      critterList.clear();
+      running = false;
+      changeStatus( running );
+      repaint();
+    }
+  }
+  
+  /** A class that implements an ActionListener for Runner */
+  class RunnerListener implements ActionListener
+  {
+    /** Method that sets the number and text field when 
+      * user clicks Runner button
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      number = RUNNER;
+      critLabel.setText( "Click in the world to add a Runner" );
+    }
+  }
+  
+  /** A class that implements an ActionListener for Chaser */
+  class ChaseListener implements ActionListener
+  {
+    /** Method that sets the number and text field when 
+      * user clicks Chaser button
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      number = CHASER;
+      critLabel.setText( "Click in the world to add a Chaser" );
+    }
+  }
+  
+  /** A class that implements an ActionListener for Random */
+  class RandListener implements ActionListener
+  {
+    /** Method that sets the number and text field when 
+      * user clicks Random button
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      number = RANDOM;
+      critLabel.setText( "Click in the world to add a Random" );
+    }
+  }
+  
+  /** A class that implements an ActionListener for Custom */
+  class CustomListener implements ActionListener
+  {
+    /** Method that sets the number and text field when 
+      * user clicks Custom button
+      * @param e The ActionEvent
+      */
+    public void actionPerformed( ActionEvent e )
+    {
+      number = CUSTOM;
+      critLabel.setText( "Click in the world to add a Custom" );
+    }
+  }
+  
+  /** Class used to listen to user's mouse clicks */
+  class ClickListener implements MouseListener
+  {
+    /** Method that responds to mouse clicks and
+      * creates the appropriate Critter objects
+      * @param e The MouseEvent
+      */
+    public void mouseClicked( MouseEvent e )
+    {
+      switch( number )
+      {
+        case RUNNER:
+          critterList.add( new Runner( e.getX(), e.getY() ) );
+          critLabel.setText( "Select which Critter to place" );
+          number = -1;
+          repaint();
+          break;
+        case CHASER:
+          critterList.add( new Chaser( e.getX(), e.getY() ) );
+          critLabel.setText( "Select which Critter to place" );
+          number = -1;
+          repaint();
+          break;
+        case RANDOM:
+          critterList.add( new Random( e.getX(), e.getY() ) );
+          critLabel.setText( "Select which Critter to place" );
+          number = -1;
+          repaint();
+          break;
+        case CUSTOM:
+          critterList.add( new Custom( e.getX(), e.getY() ) );
+          critLabel.setText( "Select which Critter to place" );
+          number = -1;
+          repaint();
+          break;
+        default:
+          break;
+      }
+      
+      if( running ==  false && critterList.size() >=2 )
+        stateLabel.setText( "Simulation is stopped." );
+    }
+    
+    public void mousePressed( MouseEvent e ) {}
+    public void mouseReleased( MouseEvent e ) {}
+    public void mouseEntered( MouseEvent e ) {}
+    public void mouseExited( MouseEvent e ) {}
+  }
+  
+  
+  /**
+   * Implemented from the Runnable class -- runs when a thread is started.
+   */
+  // Note: This method won't do anything until you implement functionality in 
+  // the Interactor.
+  public void run()
+  {
+    try {
+      while( true ) {
+        // Only interact and repaint when simulation is running
+        if ( running ) {
+          // Create a rectangle object the size of the canvas
+          Rectangle r = new Rectangle(world.getSize().width,world.getSize().height);
+          // Make each critter interact with its closest critter
+          for ( int x = 0; x<critterList.size(); x++ )
+          {
+            
+            Critter crit = (Critter) critterList.get(x);
+            
+            actor.interact( crit, critterList, r );
+          }
+          repaint();
+        }
+        Thread.sleep( DELAY );
+      }
+    }
+    catch (InterruptedException ex) {
+    }
+  }
+  
+  /**
+   * Panel that knows how to paint Critters (if they can paint themselves)
+   */
+  class CritterPanel extends JPanel
+  {
+    protected void paintComponent( Graphics g )
+    {
+      super.paintComponent( g );
+      for ( int x = 0; x<critterList.size(); x++ )
+      {
+        Critter critter = (Critter) critterList.get(x);
+        critter.paint( g );
+      }
+    }
+  }  
+}
